@@ -88,6 +88,3 @@ This ordering guarantees the hardware is always in a consistent state when any h
 
 
 
-## License
-
-MIT — free to use, modify, and incorporate into your own firmware projects.
