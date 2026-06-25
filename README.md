@@ -38,13 +38,14 @@ The FSM has **6 states** and **6 events**, with a static 2D transition table map
 
 ## File Structure
 
-```
-battery-charger-fsm/
-├── fsm.h        # Enums, structs, and public function declarations
-├── fsm.c        # Transition table + FSM dispatch engine
-├── actions.c    # State entry/exit hooks and transition action functions
-└── main.c       # Test driver — simulates normal cycle and fault scenario
-```
+| File | Purpose |
+|---|---|
+| `fsm.h` | Defines state and event enums, FSM data structures, and public function declarations |
+| `fsm.c` | Implements the state transition table and FSM dispatch logic |
+| `actions.c` | Contains state entry/exit functions and transition action implementations |
+| `main.c` | Test driver that simulates the normal charging cycle and fault scenarios |
+
+---
 
 ### `fsm.h`
 Defines `FsmState_t`, `FsmEvent_t`, and `FsmContext_t`. Declares the four public API functions: `Fsm_Init`, `Fsm_HandleEvent`, `Fsm_GetState`, `Fsm_StateName`, `Fsm_EventName`.
