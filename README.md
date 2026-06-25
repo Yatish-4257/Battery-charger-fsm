@@ -63,82 +63,8 @@ Runs two test sequences and prints every state transition with its before/after 
 
 ---
 
-## Building and Running
 
-No external libraries required. Any C99-compatible compiler works.
-
-**GCC:**
-```bash
-gcc -std=c99 -Wall -Wextra -o charger_fsm main.c fsm.c actions.c
-./charger_fsm
-```
-
-**Clang:**
-```bash
-clang -std=c99 -Wall -Wextra -o charger_fsm main.c fsm.c actions.c
-./charger_fsm
-```
-
-**MSVC (Windows):**
-```cmd
-cl main.c fsm.c actions.c /Fe:charger_fsm.exe
-charger_fsm.exe
-```
-
----
-
-## Sample Output
-
-```
-Battery Charging Controller FSM — simulation build
-
-========================================
- TEST 1: Normal charge cycle (CC/CV)
-========================================
-  [HW] Charger output disabled, monitoring battery
-
->> Event: ChargerConnected  (state before: Idle)
-  [HW] Leaving idle — arming charger
-  [ACT] Charger connected — starting pre-charge sequence
-  [HW] Trickle charge enabled (50 mA pre-conditioning)
->> Transition complete — now in: TrickleCharge
-
->> Event: VoltageThresholdReached  (state before: TrickleCharge)
-  [HW] Trickle charge stopped
-  [ACT] Minimum cell voltage reached — switching to bulk CC
-  [HW] Constant-current mode: 1.0 A bulk charge
->> Transition complete — now in: ConstantCurrent
-
->> Event: VoltageThresholdReached  (state before: ConstantCurrent)
-  [HW] CC phase ended
-  [ACT] Pack voltage at CV setpoint — tapering current
-  [HW] Constant-voltage mode: 4.20 V regulation
->> Transition complete — now in: ConstantVoltage
-
->> Event: CurrentThresholdReached  (state before: ConstantVoltage)
-  [HW] CV phase ended
-  [ACT] Termination current met — charge cycle complete
-  [HW] Charge complete — maintaining float / termination
->> Transition complete — now in: Full
-
->> Event: ChargerDisconnected  (state before: Full)
-  [HW] Ending maintenance charge
-  [ACT] Charger disconnected — shutting down power stage
-  [HW] Charger output disabled, monitoring battery
->> Transition complete — now in: Idle
-
-========================================
- TEST 2: Overtemperature fault scenario
-========================================
-...
-  [ACT] OVERTEMP interrupt — emergency shutdown initiated
-  [HW] FAULT: charger disabled, fault latch set
->> Transition complete — now in: Fault
-```
-
----
-
-## Design Notes
+##  Important Points
 
 **Why table-driven?**
 A `switch`/`if-else` FSM grows unmanageable as states and events multiply. The table approach keeps all transition logic in one place — adding a new state means adding one row. The dispatch engine never changes.
@@ -160,16 +86,7 @@ This ordering guarantees the hardware is always in a consistent state when any h
 
 ---
 
-## Extending the FSM
 
-To add a new state (e.g. `FSM_STATE_BALANCING`):
-1. Add the enum value to `FsmState_t` in `fsm.h` (before `FSM_STATE_COUNT`)
-2. Add entry/exit functions in `actions.c` and forward-declare them in `fsm.c`
-3. Add a row to `stateTable[]` in `fsm.c`
-4. Add a row to `transitionTable[]` in `fsm.c` covering all events
-5. Update any existing rows that should transition into the new state
-
----
 
 ## License
 
