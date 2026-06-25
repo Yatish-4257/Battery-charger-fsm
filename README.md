@@ -1,4 +1,4 @@
-# battery-charger-fsm
+# Battery Charger FSM
 
 A table-driven finite state machine (FSM) written in C that simulates a Li-ion battery charging controller. Structured like real embedded firmware — clean separation of engine, transition table, and hardware action layer.
 
